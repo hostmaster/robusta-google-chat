@@ -63,10 +63,9 @@ class WebhookServer:
                 """Handles HTTP POST requests."""
                 content_length = int(self.headers["Content-Length"])
                 post_data = self.rfile.read(content_length)
-                data = loads(post_data.decode("utf-8"))
-                print(f"POST body ({data})")
+                data = post_data.decode("utf-8")
 
-                self.google_chat.send("Test message")
+                self.google_chat.send(data)
 
                 self._send_response(
                     200, headers=(("Content-type", "%s; charset=utf-8" % "text/html"),)
