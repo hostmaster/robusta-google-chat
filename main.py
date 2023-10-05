@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # pylint: disable=unused-argument, import-error, logging-fstring-interpolation, global-statement, fixme
 
-
 from functools import partial
 import signal
 import sys
 import os
-from json import dumps, loads
+from json import dumps
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import requests
 

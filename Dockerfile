@@ -31,14 +31,10 @@ RUN python -m venv /venv && \
 
 # Production image
 FROM base as runtime
+LABEL org.opencontainers.image.source="https://github.com/hostmaster/robusta-google-chat"
+
 ENV PATH /venv/bin:$PATH
-
 COPY --from=builder /venv /venv
-
 WORKDIR $APP_HOME
 COPY . ./
-
-ARG GIT_COMMIT=unspecified
-RUN echo $GIT_COMMIT > "$APP_HOME/git_version"
-
 CMD [ "python", "-u", "main.py" ]
