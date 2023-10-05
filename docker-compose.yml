@@ -1,5 +1,5 @@
 services:
-  tracker:
+  webhook_sink:
     image: ghcr.io/hostmaster/robusta-google-chat
     platform: linux/x86_64
     build:

@@ -6,7 +6,7 @@ from functools import partial
 import signal
 import sys
 import os
-from json import dumps
+from json import dumps, loads
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import requests
 
@@ -39,23 +39,38 @@ class WebhookServer:
                 self.google_chat = google_chat
                 super().__init__(*args, **kwargs)
 
-            def _set_headers(self):
-                self.send_response(200)
-                self.send_header("Content-type", "text/html")
-                self.end_headers()
+            def _send_response(self, http_code, message=None, headers=None):
+                """Sends HTTP response code, message and headers."""
+                self.send_response(http_code, message)
+                if headers:
+                    for header in headers:
+                        self.send_header(*header)
+                    self.end_headers()
 
             def do_GET(self):  # pylint: disable=invalid-name
-                self._set_headers()
+                """Handles HTTP GET requests."""
+                self._send_response(
+                    200, headers=(("Content-type", "%s; charset=utf-8" % "text/html"),)
+                )
 
             def do_HEAD(self):  # pylint: disable=invalid-name
-                self._set_headers()
+                """Handles HTTP HEAD requests."""
+                self._send_response(
+                    200, headers=(("Content-type", "%s; charset=utf-8" % "text/html"),)
+                )
 
             def do_POST(self):  # pylint: disable=invalid-name
+                """Handles HTTP POST requests."""
                 content_length = int(self.headers["Content-Length"])
                 post_data = self.rfile.read(content_length)
-                self._set_headers()
-                print(post_data)
+                data = loads(post_data.decode("utf-8"))
+                print(f"POST body ({data})")
+
                 self.google_chat.send("Test message")
+
+                self._send_response(
+                    200, headers=(("Content-type", "%s; charset=utf-8" % "text/html"),)
+                )
 
         port = int(os.getenv("PORT", "8001"))
         webhook_url = os.getenv("WEBHOOK_URL", "undefined")
